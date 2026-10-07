@@ -116,7 +116,7 @@ export const birthday = {
     message: "Hi! I'll be at Adrik's 1st birthday celebration.",
   },
 
-  music: "/music/birthday.mp3",
+  music: "/music/birthday.wav",
 
   seo: {
     title: "Adrik's 1st Birthday — Our Little Prince",
