@@ -45,7 +45,7 @@ export default function Page() {
           <DecorativeParticles fixed count={12} />
           <MusicControl playing={playing} onToggle={toggle} />
           <WelcomeSection /><BirthdayReveal /><ScratchReveal /><Countdown />
-          <MemoriesSection /><Gallery /><EventDetails /><VenueSection /><FinalMessage />
+          <MemoriesSection />{b.gallery.enabled && <Gallery />}<EventDetails /><VenueSection /><FinalMessage />
         </motion.div>
       )}
     </main>

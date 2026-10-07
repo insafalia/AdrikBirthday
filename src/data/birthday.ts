@@ -91,6 +91,8 @@ export const birthday = {
   ],
 
   gallery: {
+    /** Set to true to show the photo gallery section */
+    enabled: false,
     eyebrow: "Little Moments",
     title: "Big Joys",
     photos: [
