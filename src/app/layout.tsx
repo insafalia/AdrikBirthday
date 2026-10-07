@@ -1,26 +1,11 @@
 import type { Metadata, Viewport } from "next";
-import { Fredoka, Nunito, Pacifico } from "next/font/google";
 import { birthday as b } from "@/data/birthday";
 import "./globals.css";
 
-const display = Fredoka({
-  subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
-  variable: "--font-display",
-  display: "swap",
-});
-const sans = Nunito({
-  subsets: ["latin"],
-  weight: ["400", "500", "600", "700", "800"],
-  variable: "--font-sans",
-  display: "swap",
-});
-const script = Pacifico({
-  subsets: ["latin"],
-  weight: "400",
-  variable: "--font-script",
-  display: "swap",
-});
+// Loaded by the browser instead of next/font/google, whose build-time download
+// breaks when Google returns font URLs without a file extension.
+const fontsHref =
+  "https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Nunito:wght@400;500;600;700;800&family=Pacifico&display=swap";
 
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000"),
@@ -57,9 +42,17 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     "--color-sage": t.sage,
     "--color-text": t.text,
     "--color-muted": t.muted,
+    "--font-display": "'Fredoka', system-ui, sans-serif",
+    "--font-sans": "'Nunito', system-ui, sans-serif",
+    "--font-script": "'Pacifico', cursive",
   } as React.CSSProperties;
   return (
-    <html lang="en" className={`${display.variable} ${sans.variable} ${script.variable}`} style={vars}>
+    <html lang="en" style={vars}>
+      <head>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link rel="stylesheet" href={fontsHref} />
+      </head>
       <body>{children}</body>
     </html>
   );
