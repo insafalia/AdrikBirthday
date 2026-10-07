@@ -49,6 +49,7 @@ export const birthday = {
     eyebrow: "Join The Celebration",
     name: "Thennaisolai Restaurant",
     address: "Chinnavedampatti",
+    photo: "/images/venue.png",
     mapsUrl:
       "https://www.google.com/maps/search/?api=1&query=Thennaisolai+Restaurant+Chinnavedampatti",
   },
