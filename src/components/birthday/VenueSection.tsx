@@ -30,9 +30,11 @@ export default function VenueSection() {
         >
           <MapPin size={14} /> Open in Google Maps
         </a>
-        <a href={wa} target="_blank" rel="noopener noreferrer" className="btn-gold">
-          <MessageCircle size={14} /> RSVP on WhatsApp
-        </a>
+        {b.rsvp.enabled && (
+          <a href={wa} target="_blank" rel="noopener noreferrer" className="btn-gold">
+            <MessageCircle size={14} /> RSVP on WhatsApp
+          </a>
+        )}
       </Reveal>
     </section>
   );

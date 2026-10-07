@@ -112,6 +112,8 @@ export const birthday = {
   },
 
   rsvp: {
+    /** Set to true to show the "RSVP on WhatsApp" button */
+    enabled: false,
     whatsapp: "919999999999",
     message: "Hi! I'll be at Adrik's 1st birthday celebration.",
   },

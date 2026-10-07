@@ -6,16 +6,100 @@ import SectionHeading from "@/components/ui/SectionHeading";
 import DecorativeParticles from "@/components/decorations/DecorativeParticles";
 
 const BRUSH = 52,
-  THRESHOLD = 0.5;
+  THRESHOLD = 0.5,
+  MAX_SPARKS = 160;
+const SPARK_COLORS = ["#FFD54F", "#FF8A65", "#4FC3F7", "#81C784", "#CE93D8", "#FFFFFF"];
+
+type Spark = { x: number; y: number; vx: number; vy: number; life: number; max: number; size: number; color: string; star: boolean; spin: number };
+
+function drawStar(x: CanvasRenderingContext2D, r: number) {
+  x.beginPath();
+  for (let i = 0; i < 10; i++) {
+    const a = (i * Math.PI) / 5 - Math.PI / 2,
+      rr = i % 2 ? r * 0.45 : r;
+    x.lineTo(Math.cos(a) * rr, Math.sin(a) * rr);
+  }
+  x.closePath();
+  x.fill();
+}
 
 export default function ScratchReveal() {
   const canvas = useRef<HTMLCanvasElement>(null),
+    fx = useRef<HTMLCanvasElement>(null),
     wrap = useRef<HTMLDivElement>(null);
   const drawing = useRef(false),
     done = useRef(false),
     last = useRef<{ x: number; y: number } | null>(null),
-    moves = useRef(0);
+    moves = useRef(0),
+    sparks = useRef<Spark[]>([]),
+    raf = useRef(0),
+    reduced = useRef(false);
   const [revealed, setRevealed] = useState(false);
+  const [progress, setProgress] = useState(0);
+
+  useEffect(() => {
+    reduced.current = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    return () => cancelAnimationFrame(raf.current);
+  }, []);
+
+  // Sparkle trail that bursts out from the finger while scratching
+  const animate = useCallback(() => {
+    const c = fx.current,
+      w = wrap.current;
+    if (!c || !w) return;
+    const { width, height } = w.getBoundingClientRect(),
+      dpr = Math.min(window.devicePixelRatio || 1, 2);
+    if (c.width !== Math.round(width * dpr)) {
+      c.width = Math.round(width * dpr);
+      c.height = Math.round(height * dpr);
+    }
+    const x = c.getContext("2d")!;
+    x.setTransform(dpr, 0, 0, dpr, 0, 0);
+    x.clearRect(0, 0, width, height);
+    sparks.current = sparks.current.filter((s) => s.life < s.max);
+    for (const s of sparks.current) {
+      s.life++;
+      s.vy += 0.12;
+      s.vx *= 0.98;
+      s.x += s.vx;
+      s.y += s.vy;
+      const k = 1 - s.life / s.max;
+      x.save();
+      x.globalAlpha = k;
+      x.fillStyle = s.color;
+      x.translate(s.x, s.y);
+      x.rotate(s.life * s.spin);
+      if (s.star) drawStar(x, s.size * (0.6 + k * 0.4));
+      else {
+        x.beginPath();
+        x.arc(0, 0, s.size * 0.5 * k + 0.5, 0, Math.PI * 2);
+        x.fill();
+      }
+      x.restore();
+    }
+    raf.current = sparks.current.length ? requestAnimationFrame(animate) : 0;
+  }, []);
+
+  const spawn = (p: { x: number; y: number }, n: number) => {
+    if (reduced.current) return;
+    for (let i = 0; i < n && sparks.current.length < MAX_SPARKS; i++) {
+      const a = Math.random() * Math.PI * 2,
+        v = 1 + Math.random() * 3;
+      sparks.current.push({
+        x: p.x,
+        y: p.y,
+        vx: Math.cos(a) * v,
+        vy: Math.sin(a) * v - 1.5,
+        life: 0,
+        max: 28 + Math.random() * 24,
+        size: 4 + Math.random() * 6,
+        color: SPARK_COLORS[(Math.random() * SPARK_COLORS.length) | 0],
+        star: Math.random() < 0.45,
+        spin: (Math.random() - 0.5) * 0.3,
+      });
+    }
+    if (!raf.current) raf.current = requestAnimationFrame(animate);
+  };
 
   const paint = useCallback(() => {
     const c = canvas.current,
@@ -88,6 +172,7 @@ export default function ScratchReveal() {
       total++;
       if (d[i] < 128) clear++;
     }
+    if (!done.current) setProgress(Math.min(1, clear / total / THRESHOLD));
     if (clear / total > THRESHOLD && !done.current) {
       done.current = true;
       setRevealed(true);
@@ -110,6 +195,7 @@ export default function ScratchReveal() {
     x.lineTo(p.x + 0.01, p.y);
     x.stroke();
     last.current = p;
+    spawn(p, 2);
     if (++moves.current % 6 === 0) check();
   };
 
@@ -172,6 +258,7 @@ export default function ScratchReveal() {
             drawing.current = true;
             last.current = null;
             scratch(e);
+            spawn(pos(e), 8);
           }}
           onPointerMove={scratch}
           onPointerUp={() => {
@@ -184,12 +271,28 @@ export default function ScratchReveal() {
             last.current = null;
           }}
         />
+        <canvas ref={fx} aria-hidden className="pointer-events-none absolute inset-0 h-full w-full" />
         {revealed && <DecorativeParticles variant="burst" count={40} />}
       </div>
       {!revealed && (
-        <p className="mt-5 text-center font-sans text-base font-semibold italic text-muted">
-          {b.scratch.after}
-        </p>
+        <>
+          <div
+            className="mx-auto mt-5 h-2.5 w-48 overflow-hidden rounded-full bg-[#E3F2FD]"
+            role="progressbar"
+            aria-label="Scratch progress"
+            aria-valuemin={0}
+            aria-valuemax={100}
+            aria-valuenow={Math.round(progress * 100)}
+          >
+            <div
+              className="h-full rounded-full bg-gradient-to-r from-[#42A5F5] via-[#FFCA28] to-[#FF8A65] transition-[width] duration-300"
+              style={{ width: `${progress * 100}%` }}
+            />
+          </div>
+          <p className="mt-3 text-center font-sans text-base font-semibold italic text-muted">
+            {b.scratch.after}
+          </p>
+        </>
       )}
     </section>
   );
