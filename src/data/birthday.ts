@@ -48,7 +48,7 @@ export const birthday = {
   venue: {
     eyebrow: "Join The Celebration",
     name: "THE VIBE",
-    address: "Chinnavedampatti",
+    address: "Saravanampatti",
     photo: "/images/venue.png",
     mapsUrl: "https://maps.app.goo.gl/Gi9YfTzaiWRYcRkr6",
   },
@@ -58,7 +58,7 @@ export const birthday = {
       title: "Adrik's 1st Birthday",
       date: "2026-10-25",
       time: "17:30",
-      venue: "THE VIBE, Chinnavedampatti",
+      venue: "THE VIBE, Saravanampatti",
       description: "Join us as we celebrate Adrik's 1st Birthday!",
       details: [
         { label: "Time", value: "5.30 PM – 8.30 PM" },
@@ -125,7 +125,7 @@ export const birthday = {
   seo: {
     title: "Adrik's 1st Birthday — Our Little Prince",
     description:
-      "Join us on 25th October at THE VIBE, Chinnavedampatti to celebrate Adrik turning ONE!",
+      "Join us on 25th October at THE VIBE, Saravanampatti to celebrate Adrik turning ONE!",
     image: "/images/invitation.jpg",
   },
 
