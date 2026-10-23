@@ -126,7 +126,7 @@ export const birthday = {
     title: "Adrik's 1st Birthday — Our Little Prince",
     description:
       "Join us on 25th October at THE VIBE, Saravanampatti to celebrate Adrik turning ONE!",
-    image: "/images/invitation.jpg",
+    image: "/images/invitation-new.jpg",
   },
 
   theme: {
