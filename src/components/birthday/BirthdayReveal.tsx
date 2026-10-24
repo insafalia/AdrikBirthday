@@ -23,14 +23,14 @@ export default function BirthdayReveal() {
         <h2 className="script mt-3 text-[4.5rem] leading-none text-primary">{b.person.name}</h2>
       </Reveal>
       <motion.div style={{ y }} className="relative mx-auto mt-10 w-[82%]">
-        <div className="photo arch aspect-[3/4]">
+        <div className="photo arch aspect-[2/3]">
           <Image
             src={b.person.photo}
             alt={b.person.photoAlt}
             fill
             priority
             sizes="(max-width:480px) 82vw, 380px"
-            className="object-cover object-top"
+            className="object-cover object-center"
           />
         </div>
         <motion.span

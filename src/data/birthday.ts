@@ -6,7 +6,7 @@ export const birthday = {
   person: {
     name: "Adrik",
     age: 1,
-    photo: "/images/person.jpg",
+    photo: "/images/invitation-new.jpg",
     photoAlt: "Adrik — Our Little Prince turns ONE",
   },
 
